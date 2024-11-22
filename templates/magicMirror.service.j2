@@ -1,0 +1,14 @@
+[Unit]
+Description={{ magicMirror.name }}
+After=user-1000.slice
+Requires=user-1000.slice
+
+[Service]
+ExecStart={{ magicMirror.name }}.sh
+Restart=always
+RestartSec=3
+User={{ magicMirror.user }}
+Environment="MM_CONFIG_FILE=config/config_{{ magicMirror.name }}.js"
+
+[Install]
+WantedBy=multi-user.target

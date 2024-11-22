@@ -1,0 +1,20 @@
+:root {
+  --color-text: #eeeeee;
+  --color-text-dimmed: #dddddd;
+  --color-text-bright: #ffffff;
+}
+
+
+.dimmed,
+header,
+body {
+    color: #FFFFFF;
+}
+
+.MMM-Worldclock .main {
+  font-size: 1.65rem;
+}
+
+.MMM-Worldclock .caption {
+  font-size: 1rem;
+}

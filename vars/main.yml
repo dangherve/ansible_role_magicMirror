@@ -1,0 +1,6 @@
+---
+magicMirror_packages:
+  - nodejs
+  - git
+  - vim
+

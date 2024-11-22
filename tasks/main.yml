@@ -1,0 +1,67 @@
+- name: create dynamic module
+  template:
+    src: templates/dynamicList.yml.j2
+    dest: "/tmp/dynamicList{{ i }}.yml"
+    mode: 0644
+  vars:
+    cityList: "{{ weatherPlace }}"
+    moduleList: "{{ weatherModule }}"
+    hiddenMmoduleList: ""
+    position: top_right
+    i: ""
+  delegate_to: localhost
+  become_user: dangherve
+  become_method: su
+  notify:
+    - restart magicMirror
+
+
+- name: create dynamic module
+  template:
+    src: templates/dynamicList.yml.j2
+    dest: "/tmp/dynamicList{{ i }}.yml"
+    mode: 0644
+  vars:
+    cityList: "{{ weatherPlace }}"
+    moduleList: "{{ weatherModule2 }}"
+    hiddenMmoduleList:
+        - name: cast
+          module:
+            - Screencast
+        - name: test
+          module:
+            - 1
+            - 2
+    position: top_left
+    i: "2"
+  delegate_to: localhost
+  become_user: dangherve
+  become_method: su
+  notify:
+    - restart magicMirror
+
+
+- include_vars: /tmp/dynamicList.yml
+- include_vars: /tmp/dynamicList2.yml
+
+- name: setup task
+  include_tasks: setup.yml
+
+- name: user task
+  include_tasks: user.yml
+  args:
+    apply:
+      become: yes
+      become_user: "{{ magicMirror.user }} "
+  with_items: "{{ list }}"
+  loop_control:
+    loop_var: magicMirror
+
+
+
+#- name: service task
+#  include_tasks: service.yml
+#  with_items: "{{ list }}"
+#  loop_control:
+#    loop_var: magicMirror
+

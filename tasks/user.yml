@@ -1,0 +1,58 @@
+
+- name: Clone main repo
+  git:
+    repo: https://github.com/MagicMirrorOrg/MagicMirror
+    dest: "{{ magicMirror_directory }}"
+    force: yes
+#    version:  v2.28.0
+  notify:
+    - restart magicMirror
+
+- name: Clone module repo
+  git:
+    repo: "{{ item.url }}"
+    dest: "{{ magicMirror_directory }}/modules/{{ item.name }}"
+    force: yes
+    version: "{{ item.version | default(\"HEAD\") }}"
+  ignore_errors: true
+  when: item.url is defined
+  with_items: "{{ magicMirror.moduleList }}"
+  notify:
+    - restart magicMirror
+
+- name: install module
+  shell: "cd {{ magicMirror_directory }}/modules/{{ item.name }}&& {{ item.command }} && touch {{ magicMirror_directory }}/modules/{{ item.name }}.config"
+  args:
+    creates:  "{{ magicMirror_directory }}/modules/{{ item.name }}.config"
+  when: item.command is defined
+  with_items: "{{ magicMirror.moduleList }}"
+
+- name: install module if root need
+  shell: "cd {{ magicMirror_directory }}/modules/{{ item.name }} && {{ item.commandRoot }} && touch {{ magicMirror_directory }}/modules/{{ item.name }}.config"
+  args:
+    creates:  "{{ magicMirror_directory }}/modules/{{ item.name }}.config"
+  become: yes
+  become_user: root
+  when: item.commandRoot is defined
+  with_items: "{{ magicMirror.moduleList }}"
+
+- name: create config file {{ magicMirror.name }}
+  template:
+    src: templates/config.js.j2
+    dest: "{{ magicMirror_directory }}/config/config_{{ magicMirror.name }}.js"
+    mode: 0644
+  notify:
+    - restart magicMirror
+
+- name: css file
+  copy:
+    src: files/custom.css
+    dest: "{{ magicMirror_directory }}/css/"
+    mode: 0644
+  notify:
+    - restart magicMirror
+
+- name: install all package
+  shell: "cd {{ magicMirror_directory }} && npm run install-mm && pm2 start -n {{ magicMirror.name }} {{ magicMirror.name }}.sh && pm2 save && touch {{ magicMirror_directory }}/{{ magicMirror.name }}.config"
+  args:
+    creates: "{{ magicMirror_directory }}/{{ magicMirror.name }}.config"

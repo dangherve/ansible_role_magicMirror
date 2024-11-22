@@ -1,0 +1,14 @@
+---
+
+- name: restart magicMirror
+  command: "pm2 restart {{ magicMirror.name }}"
+  become: yes
+  become_user: "{{ magicMirror.user }}"
+  with_items: "{{ list }}"
+  loop_control:
+    loop_var: magicMirror
+
+
+- name: reload systemctl
+  command: systemctl daemon-reload
+

@@ -1,0 +1,305 @@
+
+wheaterModuleList{{ i }}: {% if moduleList is not defined or moduleList|length == 0 %}[]{% else %}
+{% for itemModule in moduleList %}
+{% for item in cityList %}
+
+{% if itemModule.provider != "envcanada"  or item.siteCode is defined %}
+
+################################################################################
+# {{ itemModule.provider }} {% if itemModule.provider == "pirateweather" or itemModule.provider == "weatherbit" %} KEEP LOADING{% endif %}{% if itemModule.provider == "openmeteo"  %} invalid date/NaN/Undefined{% endif %}
+
+
+    - name: helloworld
+      position: {{ position }}
+      classes: {{ itemModule.provider }}_{{ item.codeClasses }}
+      config:
+        text: {{ item.city }} {{ itemModule.provider }}
+
+{% if itemModule.name != "MTO1" %}
+    - name: {{ itemModule.name }}
+{% endif %}
+{% if itemModule.name == "MTO1" %}
+# weather API
+    - url: https://github.com/dangherve/MMM-Weather-Now
+      name: MMM-Weather-Now
+      command: npm install
+{% endif %}
+{% if itemModule.name == "MMM-AccuWeatherForecastDeluxe" %}
+#https://github.com/BigBot89/MMM-AccuWeatherForecastDeluxe
+      url: https://github.com/dangherve/MMM-AccuWeatherForecastDeluxe
+      command: npm install
+{% endif %}
+{% if itemModule.name == "MMM-OneCallWeather" %}
+#https://github.com/MarcLandis/MMM-OpenWeatherMapForecast
+#https://github.com/Tom-Hirschberger/MMM-OpenWeatherForecast
+#https://github.com/KristjanESPERANTO/MMM-OneCallWeather
+      url: https://github.com/dangherve/MMM-OneCallWeather
+      command: npm install
+{% endif %}
+      position: {{ position }}
+      classes: {{ itemModule.provider }}_{{ item.codeClasses }}
+      config:
+{% if itemModule.name == "weather" %}
+        provider: {{ itemModule.provider }}
+        type: current
+        colored: true
+        fade: false
+        updateInterval: 600000 #10 min
+{% endif %}
+{% if itemModule.name == "MTO1" %}
+        lat: {{ item.lat }}
+        lon: {{ item.lon }}
+        api_key: {{ itemModule.apikey }}
+        doNotConvert: false
+        interval: 300000
+{% endif %}
+{% if itemModule.name == "MMM-OneCallWeather" %}
+        latitude: {{ item.lat }}
+        longitude: {{ item.lon }}
+        apikey: {{ itemModule.apikey }}
+        iconset: 4a # or 9a(svg)
+        iconsetFormat: png
+{% endif %}
+{% if itemModule.name == "MMM-AccuWeatherForecastDeluxe" %}
+        apikey: {{ itemModule.apikey }}
+        apikey2: {{ itemModule.apikey2 | default('""') }}
+        apikey3: {{ itemModule.apikey3 | default('""') }}
+        debug: {{ item.debug | default(false)}}
+        endpointDebug: {{ item.endpointDebug | default('""') }}
+        endpointNowDebug: {{ item.endpointNowDebug | default('""') }}
+        endpointHourlyDebug: {{ item.endpointHourlyDebug|default('""') }}
+
+        locationKey: {{ item.locationKey }}
+        updateInterval: 30
+        listenerOnly: false #require true for other
+        highColor: "#c80d0d"
+        lowColor: "#0045ff"
+        relativeColors: true
+        hourlyForecastHeaderText: "Prévision horaire"
+        hourlyForecastLayout: table
+        hourlyForecastInterval: 2
+        maxHourliesToShow: 6
+        dailyForecastHeaderText: "Prochains jours "
+        dailyForecastLayout: table
+        ignoreToday: true
+        showPrecipitationProbability: true
+        showWindDirection: true
+        showWindGust: true
+        iconset: 6oa # or 6fa 5c 4c 1c
+        mainIconset: 6fa
+        showAttribution: false
+
+
+{% endif %}
+
+{% if itemModule.provider == "openweathermap" %}
+        lat: {{ item.lat }}
+        lon: {{ item.lon }}
+        locationID: {{ item.locationID }}
+        location: {{ item.location }}
+        apiVersion: '2.5'
+        weatherEndpoint: /weather
+        apiKey: {{ itemModule.apikey }}
+{% endif %}
+{% if itemModule.provider == "pirateweather" %}
+        lat: {{ item.lat }}
+        lon: {{ item.lon }}
+        apiBase: https://api.pirateweather.net
+        weatherEndpoint: /forecast
+        apiKey: {{ itemModule.apikey }}
+{% endif %}
+{% if itemModule.provider == "weatherbit" %}
+        lat: {{ item.lat }}
+        lon: {{ item.lon }}
+        apiBase: https://api.weatherbit.io/v2.0
+        weatherEndpoint: /current
+        apiKey: {{ itemModule.apikey }}
+{% endif %}
+{% if itemModule.provider == "envcanada" %}
+        siteCode: {{ item.siteCode }}
+        provCode: {{ item.provCode }}
+        location: {{ item.cityEnvCanada }}
+{% endif %}
+{% if itemModule.provider == "openmeteo" %}
+        lat: {{ item.lat }}
+        lon: {{ item.lon }}
+        apiBase: https://api.open-meteo.com/v1
+        showUVIndex: true
+{% endif %}
+{% if itemModule.provider == "SMHI" %}
+        lat: {{ item.lat }}
+        lon: {{ item.lon }}
+{% endif %}
+{% if itemModule.provider == "yr" %}
+        lat: {{ item.lat }}
+        lon: {{ item.lon }}
+{% endif %}
+
+
+{% if itemModule.name == "weather" %}
+    - name: {{ itemModule.name }}
+{% endif %}
+{% if itemModule.name == "MTO1" %}
+    - url: https://github.com/nigel-daniels/MMM-3Day-Forecast
+      name: MMM-3Day-Forecast
+      command: npm install
+{% endif %}
+{% if itemModule.name != "MMM-AccuWeatherForecastDeluxe" and itemModule.name != "MMM-OneCallWeather" %}
+      header: Prévision
+      position: {{ position }}
+      classes: {{ itemModule.provider }}_{{ item.codeClasses }}
+      config:
+{% endif %}
+
+{% if itemModule.name == "weather" %}
+        provider: {{ itemModule.provider }}
+        type: forecast
+        colored: true
+        fade: false
+        updateInterval: 600000 #10 min
+{% endif %}
+{% if itemModule.name == "MTO1" %}
+        lat: {{ item.lat }}
+        lon: {{ item.lon }}
+        api_key: {{ itemModule.apikey }}
+        interval: 300000
+{% endif %}
+
+{% if itemModule.provider == "openweathermap" %}
+        lat: {{ item.lat }}
+        lon: {{ item.lon }}
+        locationID: {{ item.locationID }}
+        location: {{ item.location }}
+        apiVersion: '2.5'
+        weatherEndpoint: /forecast
+        apiKey: {{ itemModule.apikey }}
+{% endif %}
+{% if itemModule.provider == "pirateweather" %}
+        lat: {{ item.lat }}
+        lon: {{ item.lon }}
+        apiBase: https://api.pirateweather.net
+        weatherEndpoint: /forecast
+        apiKey: {{ itemModule.apikey }}
+{% endif %}
+{% if itemModule.provider == "weatherbit" %}
+        lat: {{ item.lat }}
+        lon: {{ item.lon }}
+        apiBase: https://api.weatherbit.io/v2.0
+        weatherEndpoint: /forecast/daily
+        apiKey: {{ itemModule.apikey }}
+{% endif %}
+{% if itemModule.provider == "envcanada" %}
+        siteCode: {{ item.siteCode }}
+        provCode: {{ item.provCode }}
+        location: {{ item.cityEnvCanada }}
+{% endif %}
+{% if itemModule.provider == "openmeteo" %}
+        lat: {{ item.lat }}
+        lon: {{ item.lon }}
+        apiBase: https://api.open-meteo.com/v1
+        showUVIndex: true
+{% endif %}
+{% if itemModule.provider == "SMHI" %}
+        lat: {{ item.lat }}
+        lon: {{ item.lon }}
+{% endif %}
+{% if itemModule.provider == "yr" %}
+        lat: {{ item.lat }}
+        lon: {{ item.lon }}
+{% endif %}
+
+{% if itemModule.provider == "openweathermap" %}#DO NOT WORK{% endif %}
+
+
+{% if itemModule.name == "weather" %}
+    - name: weather
+      header: Prévision horaire {{ item.city }}
+      position: {{ position }}
+      classes: {{ itemModule.provider }}_{{ item.codeClasses }}
+      config:
+        provider: {{ itemModule.provider }}
+        type: hourly
+        colored: true
+        fade: false
+        updateInterval: 600000 #10 min
+
+{% if itemModule.provider == "openweathermap" %}
+        lat: {{ item.lat }}
+        lon: {{ item.lon }}
+        locationID: {{ item.locationID }}
+        location: {{ item.location }}
+        apiVersion: '3.0'
+        weatherEndpoint: /onecall
+        apiKey: {{ itemModule.apikey }}
+{% endif %}
+{% if itemModule.provider == "pirateweather" %}
+        lat: {{ item.lat }}
+        lon: {{ item.lon }}
+        apiBase: https://api.pirateweather.net
+        weatherEndpoint: /forecast
+        apiKey: {{ itemModule.apikey }}
+{% endif %}
+{% if itemModule.provider == "weatherbit" %}
+        lat: {{ item.lat }}
+        lon: {{ item.lon }}
+        apiBase: https://api.weatherbit.io/v2.0
+        weatherEndpoint: /current
+        apiKey: {{ itemModule.apikey }}
+{% endif %}
+{% if itemModule.provider == "envcanada" %}
+        siteCode: {{ item.siteCode }}
+        provCode: {{ item.provCode }}
+        location: {{ item.cityEnvCanada }}
+{% endif %}
+{% if itemModule.provider == "openmeteo" %}
+        lat: {{ item.lat }}
+        lon: {{ item.lon }}
+        apiBase: https://api.open-meteo.com/v1
+        showUVIndex: true
+{% endif %}
+{% if itemModule.provider == "SMHI" %}
+        lat: {{ item.lat }}
+        lon: {{ item.lon }}
+{% endif %}
+{% if itemModule.provider == "yr" %}
+        lat: {{ item.lat }}
+        lon: {{ item.lon }}
+{% endif %}
+{% endif %}
+{% endif %}
+{% endfor %}
+{% endfor %}
+
+{% endif %}
+
+
+pageModule{{ i }}:
+    - url: https://github.com/sdetweil/MMM-pages
+      name: MMM-pages
+      command: npm install
+      config:
+        rotationTime: 10000
+        fixed: ["fixed_page"]
+        modules: [
+{% for itemModule in moduleList %}
+{% for item in cityList %}
+{% if itemModule.provider != "envcanada"  or item.siteCode is defined %}
+                ["{{ itemModule.provider }}_{{ item.codeClasses }}"],
+{% endif %}
+{% endfor %}
+{% endfor %}
+            ]
+{% if hiddenMmoduleList is defined and hiddenMmoduleList|length > 0 %}
+        hiddenPages:
+{% for itemModule in hiddenMmoduleList %}
+                {{ itemModule.name }}: {{ itemModule.module | flatten(1) }}
+{% endfor %}
+{% endif %}
+
+#TO TEST if better than MMM-pages
+Carousel{{ i }}:
+    - url: https://github.com/barnabycolby/MMM-Carousel
+      name: MMMM-Carousel
+      command: npm install
+      config:
+        mode: global

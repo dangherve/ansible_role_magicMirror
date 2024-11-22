@@ -1,0 +1,49 @@
+
+
+- name: i2c enable
+  command: "raspi-config nonint do_i2c 0 ; touch /root/i2cEnable"
+  args:
+    creates: "/root/i2cEnable"
+
+- name: wayland disable
+  command: "raspi-config nonint do_wayland W1 ; touch /root/waylandDisable"
+  args:
+    creates: "/root/waylandDisable"
+
+- name: screen blanking disable
+  command: "raspi-config nonint do_blanking 1 ;touch /root/screenBlankingDisable"
+  args:
+    creates: "/root/screenBlankingDisable"
+
+- name: Download node.js
+  get_url:
+    url: https://deb.nodesource.com/setup_22.x
+    dest: /home/dangherve/nodesource_setup.sh
+    mode: '0700'
+  register: download
+
+- name: install node.js
+  shell: /home/dangherve/nodesource_setup.sh
+  when: download.changed
+
+- name: install software
+  apt:
+    update_cache: yes
+    name: "{{ magicMirror_packages }}"
+    state: present
+
+- name: install all package
+  shell: npm install -g pm2 && pm2 startup systemd -u dangherve --hp /home/dangherve && touch /root/mpm.config
+  args:
+    creates: /root/mpm.config
+
+- name: Copy magicMirror script
+  template:
+    src: magicMirror.sh.j2
+    dest: /usr/bin/{{ magicMirror.name }}.sh
+    mode: '0755'
+  with_items: "{{ list }}"
+  loop_control:
+    loop_var: magicMirror
+
+

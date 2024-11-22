@@ -1,0 +1,68 @@
+
+magicMirror_directory: /home/MagicMirror
+
+list:
+    - user: TOTO
+      name: MM1
+      update: true
+      moduleList: "{{ moduleListGeneric + wheaterModuleList + pageModule }}"
+      port: 8080
+      language: fr
+      locale: "fr_fr"
+      customCss: css/custom.css
+      electronOptions:
+         x: 0 # for have mulitple instance when multiscreen
+
+#
+
+
+weatherPlace:
+    - city: Montréal
+      codeClasses: MTL
+      lat: 45.5088
+      lon: -73.75878
+      #openWeatherMap
+      locationID: 6772430
+      location: Montreal, CA
+      #envcanada
+      siteCode: s0000635
+      provCode: QC
+      cityEnvCanada: Montréal
+      #AccuWeatherForecastDeluxe
+      debug: false
+      endpointDebug: "http://192.168.64.2/daily.json"
+      endpointNowDebug: "http://192.168.64.2/current.json"
+      endpointHourlyDebug: "http://192.168.64.2/hourly.json"
+      locationKey: 56186
+
+
+weatherModule: []
+
+
+weatherModule2:
+    - name: weather
+      provider: openweathermap #hourly do not work
+      apikey: KEY
+
+
+
+################################################################################
+
+
+moduleListGeneric:
+    - name: alert
+      classes: fixed_page
+
+
+
+#LEFT SCREEN
+moduleListGeneric2_dis:
+    - name: alert
+      classes: fixed_page
+
+
+
+moduleListGeneric2: []
+
+
+

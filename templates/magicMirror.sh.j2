@@ -1,0 +1,24 @@
+#!/bin/bash
+
+cd {{ magicMirror_directory }}
+
+
+{% if magicMirror.update  is defined %}
+git pull
+cd modules
+for dir in `ls`; do
+    if [ -d $dir ]; then
+        cd $dir
+        git pull 2>> /dev/null > /dev/null
+        if [ $? -ne 0 ]; then
+            echo $dir
+        fi
+        cd ..
+    fi
+done
+{% endif %}
+
+export MM_CONFIG_FILE=config/config_{{ magicMirror.name }}.js
+# ROBOT_CIPHERS=AES128-SHA
+DISPLAY=:0 npm start
+

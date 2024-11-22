@@ -1,0 +1,22 @@
+
+
+- name:  magicMirror services
+  template:
+    src: magicMirror.service.j2
+    dest: "/lib/systemd/system/{{ magicMirror.name }}.service"
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - reload systemctl
+
+
+- meta: flush_handlers
+
+
+- name: "start {{ magicMirror.name }}"
+  service:
+    name: "{{ magicMirror.name }}.service"
+    state: stopped
+    enabled: false
+
